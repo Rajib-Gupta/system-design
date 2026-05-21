@@ -7,6 +7,18 @@ There are two types of caching mechanisms:
 1. **In-memory caching**
 2. **Server caching**
 
+Here's the big picture of how caching fits into the overall request flow:
+
+```mermaid
+flowchart LR
+    User --> App[Application Server]
+    App --> Cache{Cache}
+    Cache -->|Hit| User
+    Cache -->|Miss| DB[(Database)]
+    DB -->|Store in cache| Cache
+    DB -->|Return data| User
+```
+
 ---
 
 ## In-Memory Caching
@@ -65,6 +77,29 @@ We can solve this with the **Single Flight (Coalescing) mechanism**:
 
 > Only **one request** goes to the database. All other requests wait. Once the data is fetched and stored in cache, it is served to everyone waiting.
 
+```mermaid
+sequenceDiagram
+    participant R1 as Request 1
+    participant R2 as Request 2
+    participant R3 as Request 3
+    participant C as Cache
+    participant DB as Database
+
+    R1->>C: Get post:2432
+    C-->>R1: Miss
+    R1->>DB: Fetch post:2432 (single DB call)
+
+    R2->>C: Get post:2432
+    C-->>R2: Miss — waiting
+    R3->>C: Get post:2432
+    C-->>R3: Miss — waiting
+
+    DB-->>C: Store post:2432
+    C-->>R1: Data
+    C-->>R2: Data (served from cache)
+    C-->>R3: Data (served from cache)
+```
+
 This handles both the **cache miss** and **cache stampede** problems in one go.
 
 ---
@@ -90,6 +125,13 @@ Common eviction policies:
 Always set a **TTL** for cached data.
 
 We don't want stale data sitting in cache indefinitely. TTL ensures the data automatically expires after a defined period, keeping memory usage in check and data reasonably fresh.
+
+```mermaid
+flowchart LR
+    Cache -->|TTL expires| Evicted[Data Evicted]
+    Evicted -->|Next request| DB[(Database)]
+    DB -->|Fresh data| Cache
+```
 
 ---
 
