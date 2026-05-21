@@ -27,6 +27,7 @@ The complete guide is available as a Hashnode blog post:
 | 7 | [Communication Protocols — WebSocket vs SSE](#) |
 | 8 | [CDN — Content Delivery Network](#) |
 | 9 | [API Design — Auth, Rate Limiting, Pagination](#) |
+| 10 | [Caching — Eviction, Invalidation, Redis vs Memcached](#) |
 
 ---
 
@@ -35,7 +36,8 @@ The complete guide is available as a Hashnode blog post:
 ```
 system-design-fundamentals/
 ├── README.md                          ← You are here
-└── system-design-fundamentals.md     ← Full guide (Hashnode-compatible)
+├── system-design-fundamentals.md     ← Core system design guide
+└── caching.md                        ← Deep dive into caching
 ```
 
 ---
@@ -78,9 +80,21 @@ Most real-world systems (e.g. Amazon, Flipkart) choose **AP** — availability o
 | SSE | Uni-directional | HTTP (closes after response) | News feeds, live scores |
 | REST | Request/Response | Stateless HTTP | General APIs |
 
----
+### Caching Strategies
 
-## ✅ System Design Checklist
+| Strategy | Write To | Best For |
+|---|---|---|
+| Cache Aside | DB first, then cache | Most use cases — flexible |
+| Write Through | Cache + DB simultaneously | Strong consistency |
+| Write Back | Cache first, DB async | High write throughput |
+
+| Eviction Policy | Removes |
+|---|---|
+| LRU | Least recently accessed |
+| LFU | Least frequently accessed |
+| FIFO | Oldest inserted |
+
+---
 
 Use this before any interview or greenfield project:
 
