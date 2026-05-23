@@ -38,6 +38,7 @@ system-design-fundamentals/
 ├── README.md                          ← You are here
 ├── system-design-fundamentals.md     ← Core system design guide
 └── caching.md                        ← Deep dive into caching
+└── replication.md                     ← Deep dive into replication and failover
 ```
 
 ---
